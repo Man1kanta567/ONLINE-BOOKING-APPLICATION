@@ -19,8 +19,6 @@ public class OnlineBookingInitializer implements WebApplicationInitializer{
 		DispatcherServlet dispatcherServlet=new DispatcherServlet(applicationContext);
 		ServletRegistration.Dynamic dynamic=servletContext.addServlet("myFrontController",dispatcherServlet);
 	    dynamic.addMapping("/myapp/*");
-	    
-		
 	}
 
 }

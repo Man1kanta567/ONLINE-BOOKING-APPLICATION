@@ -4,19 +4,21 @@ import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.mnt.dao.UserRegistrationDAO;
 import com.mnt.repoImpl.UserRegistrationRepoImpl;
 
 @Configuration
 @PropertySource(value = {"classpath:database.properties" })
-@EnableWebMvc
+@ComponentScan(basePackages = {"com.mnt.repo*"})
 public class DataBaseConfiguration 
 {
 	
@@ -55,7 +57,7 @@ public class DataBaseConfiguration
    {
 	   LocalSessionFactoryBean factoryBean=new LocalSessionFactoryBean();
 	   factoryBean.setHibernateProperties(getProperties());
-	   factoryBean.setAnnotatedClasses(UserRegistrationRepoImpl.class);
+	   factoryBean.setAnnotatedClasses(UserRegistrationDAO.class);
 	   factoryBean.setDataSource(dataSource());
 	   return factoryBean;
    }
@@ -63,12 +65,22 @@ public class DataBaseConfiguration
 	/* configuring the hibernate template */
    
    @Bean
-   public HibernateTemplate getHibernateTemplate()
+   public HibernateTemplate ht()
    {
 	   HibernateTemplate hibernateTemplate=new HibernateTemplate();
 	   hibernateTemplate.setSessionFactory(getSessionFactory().getObject());
+	   hibernateTemplate.setCheckWriteOperations(false);
 	   return hibernateTemplate;
    }
+   
+   @Bean
+   
+	public HibernateTransactionManager htxm() {
+		HibernateTransactionManager htxm=new HibernateTransactionManager();
+		htxm.setSessionFactory(getSessionFactory().getObject());
+		return htxm;
+	}
+	
    
    
    
